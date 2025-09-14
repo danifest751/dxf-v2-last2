@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon-B1PVkWok.svg">
+  <meta charset="utf-8" />
+  <meta http-equiv="x-ua-compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DXF PRO — Современный калькулятор резки</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script type="module" crossorigin src="/assets/index-DqdR6KU1.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-Bfc9OmEj.css">
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>🛠️ DXF PRO — Профессиональный калькулятор</h1>
+    <p>🎯 Высокоточные расчеты • 🚀 Быстрый рендер • 🎨 Интерактивная визуализация • 📊 Умная раскладка</p>
+  </header>
+
+  <div class="grid">
+    <div class="panel">
+      <div class="body">
+
+        <input id="file" type="file" accept=".dxf,.DXF" multiple style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;opacity:0;" />
+        
+        <!-- File tabs container -->
+        <div id="fileTabs" class="file-tabs" style="display:none; margin-top: 16px;">
+          <div class="file-tabs-header">
+            <span class="tabs-title">📁 Файлы:</span>
+            <div class="file-tabs-actions">
+              <button id="addFileBtn" class="btn btn-small" title="Добавить файл">➕</button>
+            </div>
+          </div>
+          <div id="fileTabsList" class="file-tabs-list"></div>
+        </div>
+        <div style="display:flex;gap:12px;margin-top:16px">
+          <label for="file" id="openBtn" class="btn" title="Открыть DXF" style="display:inline-flex;align-items:center;cursor:pointer;">📂</label>
+          <div class="row" style="gap:8px; align-items:center;">
+            <button id="fillSheet" class="btn">На лист</button>
+            <button id="calc" class="btn primary">🔄 Посчитать</button>
+          </div>
+        </div>
+
+        <div id="status" class="status warn" hidden>Готово к работе</div>
+
+        <div class="section-title">💰 Ценообразование</div>
+        <div class="row">
+          <div><label>💵 Цена за метр, ₽/м</label><input id="pPerM" type="number" step="0.01" value="100" readonly></div>
+          <div><label>🔩 Цена за врезку, ₽/шт</label><input id="pPierce" type="number" step="0.01" value="50" readonly></div>
+        </div>
+
+        <div class="section-title">⚙️ Параметры резки</div>
+        <div class="row">
+          <div>
+            <label>Мощность</label>
+            <select id="power">
+              <option value="0.5">0.5 кВт</option>
+              <option value="1.0">1.0 кВт</option>
+              <option value="1.5" selected>1.5 кВт</option>
+              <option value="2.0">2.0 кВт</option>
+            </select>
+          </div>
+          <div>
+            <label>Газ</label>
+            <select id="gas">
+              <option value="oxygen">Кислород (O₂)</option>
+              <option value="nitrogen" selected>Азот (N₂)</option>
+              <option value="air">Сжатый воздух</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label>⚙️ Толщина металла, мм</label>
+          <select id="th">
+            <option value="0.5">0.5 мм</option>
+            <option value="0.6">0.6 мм</option>
+            <option value="0.7">0.7 мм</option>
+            <option value="0.8">0.8 мм</option>
+            <option value="1">1.0 мм</option>
+            <option value="1.5">1.5 мм</option>
+            <option value="2">2.0 мм</option>
+            <option value="3" selected>3.0 мм</option>
+            <option value="5">5.0 мм</option>
+            <option value="6">6.0 мм</option>
+          </select>
+        </div>
+        <div class="row">
+          <div><label>Скорость (мм/мин)</label><input id="cutSpd" type="number" value="2000" readonly></div>
+          <div><label>Время врезки (с)</label><input id="pierceSec" type="number" value="1.5" readonly></div>
+        </div>
+        <div class="row">
+          <div><label>Машино-час, ₽/ч</label><input id="machPrice" type="number" value="500" step="50" readonly></div>
+        </div>
+
+        <div class="section-title">📐 Лист</div>
+        <div class="row">
+          <div><label>Ширина листа, мм</label><input id="sW" type="number" value="1250"></div>
+          <div><label>Высота листа, мм</label><input id="sH" type="number" value="2500"></div>
+        </div>
+        <div class="row">
+          <div><label>Отступ, мм</label><input id="margin" type="number" value="10"></div>
+          <div><label>Зазор, мм</label><input id="spacing" type="number" value="5"></div>
+        </div>
+        <div class="row">
+          <div>
+            <label>Повороты</label>
+            <select id="rotations">
+              <option value="0,90" selected>0°/90°</option>
+              <option value="0,90,180">0°/90°/180°</option>
+              <option value="0,90,180,270">0°/90°/180°/270°</option>
+            </select>
+          </div>
+          <div style="visibility: hidden;">
+            <!-- Hidden quantity field for backward compatibility -->
+            <input id="qty" type="hidden" value="1">
+          </div>
+        </div>
+
+        <div class="section-title collapsible-header" id="exportHeader">
+          <span>📤 Экспорт</span>
+          <button class="toggle-btn" id="exportToggle" title="Показать/скрыть экспорт">▶</button>
+        </div>
+        <div id="exportContent" class="collapsible-content" style="display:none;">
+          <div id="dl" style="display:flex;gap:8px;flex-wrap:wrap" hidden>
+            <button id="dlAnn" class="btn" disabled>📄 DXF (аннотированный)</button>
+            <button id="dlPDF" class="btn" disabled>📋 PDF (отчет)</button>
+            <button id="dlJPEG" class="btn" disabled title="Выгрузка раскладки">🖼️ JPEG (раскладка)</button>
+          </div>
+        </div>
+
+        <div style="margin-top: 16px;">
+          <button id="runTests" class="btn">🧪 Тестирование</button>
+        </div>
+
+        <div class="tests card" id="testsCard" hidden>
+          <h3>🧪 Тесты</h3>
+          <div id="testsOut" class="note">Ещё не запускались</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="canvas-wrap">
+        <div class="tabs">
+          <div class="tab active" data-tab="orig">Исходный DXF</div>
+          <div class="tab" data-tab="annot">Аннотированный</div>
+          <div class="tab" data-tab="nest">Раскладка</div>
+          <div class="file-navigation">
+            <button id="prevFileBtn" class="nav-btn" title="Предыдущий файл" disabled>◀</button>
+            <button id="nextFileBtn" class="nav-btn" title="Следующий файл" disabled>▶</button>
+          </div>
+          <label for="nestLabels" style="display:flex;align-items:center;gap:6px;margin-left:12px;white-space:nowrap;">
+            <input type="checkbox" id="nestLabels" checked>
+            Отображать надписи
+          </label>
+          <div style="margin-left:auto;padding:10px 12px" class="pill" id="zoomHint">Колесо: зум, ЛКМ: панорама</div>
+        </div>
+        <div class="canvas-holder">
+          <canvas id="cv"></canvas>
+          <div id="tooltip" class="tooltip" style="display:none"></div>
+          <div id="emptyLayoutMessage" class="empty-layout-message">
+            <div class="message-content">
+              <div class="message-icon">📊</div>
+              <h3>Раскладка не рассчитана</h3>
+              <p>Нажмите кнопку "Раскладка" для расчета размещения деталей на листе</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="body">
+        <div class="cards" id="cards">
+        </div>
+        <div class="card" id="nestCard" hidden>
+          <h3>📈 Итог раскладки</h3>
+          
+          <!-- Essential summary -->
+          <div class="essential-summary">
+            <div class="kv main-result"><span>Нужно листов</span><b id="nSheets">—</b></div>
+            <div class="kv main-result"><span>Общая стоимость</span><b id="nTotalCost">—</b></div>
+            <div class="kv main-result"><span>Общее время</span><b id="nTotalTime">—</b></div>
+            <div class="kv"><span>Эффективность</span><b id="nEff">—</b></div>
+          </div>
+          
+          <!-- Collapsible detailed parameters -->
+          <div class="section-title collapsible-header" id="detailsHeader" style="margin-top: 16px; font-size: 14px;">
+            <span>📊 Подробности</span>
+            <button class="toggle-btn" id="detailsToggle" title="Показать/скрыть подробности">▶</button>
+          </div>
+          <div id="detailsContent" class="collapsible-content" style="display:none;">
+            <!-- Detailed parameters -->
+            <div class="kv"><span>Общая длина реза</span><b id="nTotalCutLength">—</b></div>
+            <div class="kv"><span>Общее кол-во врезок</span><b id="nTotalPierces">—</b></div>
+            <div class="kv"><span>Всего файлов</span><b id="nTotalFiles">—</b></div>
+            <div class="kv"><span>Всего деталей</span><b id="nTotalParts">—</b></div>
+            <div class="kv"><span>На листе (шт)</span><b id="nPlaced">—</b></div>
+            <div class="kv"><span>Время на лист</span><b id="nTime">—</b></div>
+            <div class="kv"><span>Стоимость листа</span><b id="nCost">—</b></div>
+            <div class="kv"><span>Тип раскладки</span><b id="nLayoutType">—</b></div>
+          </div>
+          
+          <div class="note" id="nestingNote">Раскладка сеточная, повороты выбором 0/90/180/270 (180 и 0, 270 и 90 эквивалентны по габариту).</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
